@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小安诅咒账号交易系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        /* 雨夜背景效果 */
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.8)), 
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="%2311131a"/><circle cx="20" cy="30" r="2" fill="%23FFD700" opacity="0.6"/><circle cx="40" cy="25" r="1.5" fill="%23FFBF00" opacity="0.7"/><circle cx="60" cy="35" r="1.8" fill="%23FFD700" opacity="0.5"/><circle cx="80" cy="28" r="1.2" fill="%23FFBF00" opacity="0.8"/><circle cx="30" cy="60" r="1.5" fill="%23FFD700" opacity="0.6"/><circle cx="50" cy="55" r="2" fill="%23FFBF00" opacity="0.7"/><circle cx="70" cy="65" r="1.8" fill="%23FFD700" opacity="0.5"/><circle cx="90" cy="58" r="1.2" fill="%23FFBF00" opacity="0.8"/></svg>');
+            background-size: cover;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            position: relative;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* 雨滴动画 */
+        .rain-drop {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(transparent, rgba(255, 215, 0, 0.6), transparent);
+            animation: rain-fall linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes rain-fall {
+            0% { transform: translateY(-100px); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* 玻璃态卡片效果 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        /* 按钮效果 */
+        .rain-button {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(16, 185, 129, 0.9));
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 快手链接样式 */
+        .kuaishou-link {
+            color: #FFD700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .kuaishou-link:hover {
+            color: #FFBF00;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景元素 -->
+    <div id="rain-container"></div>
+    <div id="lights-container"></div>
+    
+    <!-- 背景音乐 -->
+    <audio id="bgMusic" autoplay loop>
+        <source src="http://q1.vtoa.cc:8080/audio/download?time=1757938947736" type="audio/mpeg">
+    </audio>
+    
+    <!-- 音乐控制按钮 -->
+    <div class="fixed bottom-4 right-4 z-50">
+        <button id="musicToggle" class="rain-button text-white p-3 rounded-full shadow-lg">
+            <i class="fa fa-pause"></i>
+        </button>
+    </div>
+
+    <!-- 欢迎页面 -->
+    <div id="welcomeScreen" class="fixed inset-0 flex items-center justify-center z-50">
+        <div class="glass-card p-8 max-w-md mx-4 text-center">
+            <h1 class="text-4xl font-bold mb-4 text-white">小安诅咒账号</h1>
+            <p class="text-gray-300 mb-6">买号认准小安</p>
+            <button id="enterBtn" class="rain-button text-white py-3 px-6 rounded-md">
+                立即进入
+            </button>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div id="mainContent" class="hidden">
+        <!-- 顶部导航 -->
+        <nav class="glass-card shadow-md">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center py-4">
+                    <h1 class="text-2xl font-bold text-white">小安诅咒账号</h1>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主内容区 -->
+        <div class="container mx-auto px-4 py-8">
+            <!-- 商品列表 -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold mb-6 text-white">商品列表</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- 暴龙号商品卡片 -->
+                    <div class="glass-card" id="product-1">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-white">暴龙号</h3>
+                            <p class="text-gray-300 mb-4">账号类目：暴龙号</p>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-2xl font-bold text-yellow-400">¥18</span>
+                                <span class="bg-gray-700 px-3 py-1 rounded-full text-sm text-yellow-400" id="stock-1">库存: 50</span>
+                            </div>
+                            <button class="rain-button w-full text-white py-3 rounded-md" data-id="1">
+                                <i class="fa fa-shopping-cart mr-2"></i>立即购买
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 几杯号商品卡片 -->
+                    <div class="glass-card" id="product-2">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-white">几杯号</h3>
+                            <p class="text-gray-300 mb-4">账号类目：几杯号</p>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-2xl font-bold text-yellow-400">¥21</span>
+                                <span class="bg-gray-700 px-3 py-1 rounded-full text-sm text-yellow-400" id="stock-2">库存: 50</span>
+                            </div>
+                            <button class="rain-button w-full text-white py-3 rounded-md" data-id="2">
+                                <i class="fa fa-shopping-cart mr-2"></i>立即购买
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 鸭子号商品卡片 -->
+                    <div class="glass-card" id="product-3">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-white">鸭子号</h3>
+                            <p class="text-gray-300 mb-4">账号类目：鸭子号</p>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-2xl font-bold text-yellow-400">¥25</span>
+                                <span class="bg-gray-700 px-3 py-1 rounded-full text-sm text-yellow-400" id="stock-3">库存: 50</span>
+                            </div>
+                            <button class="rain-button w-full text-white py-3 rounded-md" data-id="3">
+                                <i class="fa fa-shopping-cart mr-2"></i>立即购买
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 订单查询 -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold mb-6 text-white">订单查询</h2>
+                <div class="glass-card p-6">
+                    <div class="mb-4">
+                        <label class="block text-gray-300 mb-2" for="orderId">订单编号</label>
+                        <div class="flex">
+                            <input type="text" id="orderId" class="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-l-md text-white focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="输入订单编号查询">
+                            <button id="queryOrderBtn" class="rain-button text-white py-2 px-6 rounded-r-md">
+                                <i class="fa fa-search mr-1"></i>查询
+                            </button>
+                        </div>
+                    </div>
+                    <div id="orderResult" class="hidden mt-6 p-4 border border-gray-700 rounded-md">
+                        <h3 class="text-lg font-bold mb-2 border-b border-gray-700 pb-2 text-white">订单详情</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-gray-300">
+                            <div>
+                                <p><span class="font-semibold">订单编号：</span><span id="resultOrderId"></span></p>
+                                <p><span class="font-semibold">商品名称：</span><span id="resultProductName"></span></p>
+                                <p><span class="font-semibold">订单金额：</span><span id="resultPrice"></span></p>
+                            </div>
+                            <div>
+                                <p><span class="font-semibold">下单时间：</span><span id="resultTime"></span></p>
+                                <p><span class="font-semibold">订单状态：</span><span id="resultStatus"></span></p>
+                                <p id="resultPassword" class="hidden"><span class="font-semibold">支付密码：</span><span></span></p>
+                                <p id="resultAccount" class="hidden"><span class="font-semibold">账号：</span><span></span></p>
+                                <p id="resultAccountPassword" class="hidden"><span class="font-semibold">账号密码：</span><span></span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="orderNotFound" class="hidden mt-6 text-center text-gray-500">
+                        未找到该订单，请检查订单编号是否正确
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 订单确认模态框 -->
+        <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 hidden">
+            <div class="glass-card p-8 w-full max-w-md">
+                <h2 class="text-2xl font-bold text-center mb-6 text-white">确认订单</h2>
+                <div class="mb-6 text-gray-300">
+                    <p class="mb-2"><span class="font-semibold">商品名称：</span><span id="modalProductName"></span></p>
+                    <p class="mb-2"><span class="font-semibold">商品价格：</span><span id="modalProductPrice"></span></p>
+                    <p class="text-sm mt-4">请确认购买以上商品</p>
+                </div>
+                <div class="flex space-x-4">
+                    <button id="cancelOrderBtn" class="flex-1 bg-gray-700 text-gray-300 py-2 px-4 rounded-md hover:bg-gray-600">取消</button>
+                    <button id="confirmOrderBtn" class="flex-1 rain-button text-white py-2 px-4 rounded-md">确认下单</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 支付模态框 -->
+        <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 hidden">
+            <div class="glass-card p-8 w-full max-w-lg">
+                <h2 class="text-2xl font-bold text-center mb-6 text-white">完成支付</h2>
+                <div class="mb-6 text-center text-gray-300">
+                    <p class="mb-4 font-semibold" id="paymentOrderId">订单编号：<span></span></p>
+                    <img src="https://youke1.picui.cn/s1/2025/09/13/68c52d0fa5ed4.jpg" alt="收款码" class="w-64 h-64 mx-auto mb-4 border-2 border-yellow-400/30 rounded-lg">
+                    <p class="mb-2">请使用微信或支付宝扫描上方二维码完成支付</p>
+                    <p class="mb-4">支付金额：<span id="paymentAmount" class="font-bold text-yellow-400"></span></p>
+                    <p>完成支付后，请访问快手链接：<a href="https://v.kuaishou.com/J4H12yoX" target="_blank" class="kuaishou-link">点击联系客服</a></p>
+                </div>
+                <div class="flex space-x-4">
+                    <button id="closePaymentBtn" class="w-full rain-button text-white py-2 px-4 rounded-md">
+                        <i class="fa fa-check mr-2"></i>已完成支付
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 密码验证模态框 -->
+        <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 hidden">
+            <div class="glass-card p-8 w-full max-w-md">
+                <h2 class="text-2xl font-bold text-center mb-6 text-white">验证密码</h2>
+                <div class="mb-4">
+                    <label class="block text-gray-300 mb-2" for="verifyPassword">请输入密码</label>
+                    <input type="password" id="verifyPassword" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="输入密码">
+                </div>
+                <button id="verifyBtn" class="w-full rain-button text-white py-2 px-4 rounded-md">
+                    验证
+                </button>
+                <p id="verifyError" class="text-red-400 text-center mt-4 hidden">密码错误，请重试</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 商品数据
+        const products = [
+            { id: 1, name: '暴龙号', price: 18, stock: 50, password: '886', account: 'AUBC', accountPassword: '999999999' },
+            { id: 2, name: '几杯号', price: 21, stock: 50, password: '998', account: 'aadfytddgd', accountPassword: '88888888' },
+            { id: 3, name: '鸭子号', price: 25, stock: 50, password: '666', account: 'ashui528', accountPassword: 'BQJ10' }
+        ];
+
+        let selectedProduct = null;
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+        // 创建雨滴效果
+        function createRainDrops() {
+            const container = document.getElementById('rain-container');
+            for (let i = 0; i < 50; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'rain-drop';
+                drop.style.left = Math.random() * 100 + '%';
+                drop.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                drop.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(drop);
+            }
+        }
+
+        // 音乐控制
+        const bgMusic = document.getElementById('bgMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        
+        // 尝试自动播放音乐
+        function tryAutoPlay() {
+            const playPromise = bgMusic.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    musicToggle.innerHTML = '<i class="fa fa-pause"></i>';
+                }).catch(error => {
+                    musicToggle.innerHTML = '<i class="fa fa-play"></i>';
+                });
+            }
+        }
+        
+        // 音乐控制按钮点击事件
+        musicToggle.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicToggle.innerHTML = '<i class="fa fa-pause"></i>';
+            } else {
+                bgMusic.pause();
+                musicToggle.innerHTML = '<i class="fa fa-play"></i>';
+            }
+        });
+
+        // 更新库存显示
+        function updateStockDisplay() {
+            products.forEach(product => {
+                const stockElement = document.getElementById(`stock-${product.id}`);
+                stockElement.textContent = `库存: ${product.stock}`;
+                const buyBtn = document.querySelector(`[data-id="${product.id}"]`);
+                buyBtn.disabled = product.stock <= 0;
+                buyBtn.classList.toggle('bg-gray-600', product.stock <= 0);
+                buyBtn.innerHTML = product.stock <= 0 ? 
+                    '<i class="fa fa-exclamation-circle mr-2"></i>已售罄' : 
+                    '<i class="fa fa-shopping-cart mr-2"></i>立即购买';
+            });
+        }
+
+        // 选择商品
+        document.querySelectorAll('[data-id]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const productId = parseInt(this.dataset.id);
+                selectedProduct = products.find(p => p.id === productId);
+                
+                if (selectedProduct && selectedProduct.stock > 0) {
+                    document.getElementById('modalProductName').textContent = selectedProduct.name;
+                    document.getElementById('modalProductPrice').textContent = `¥${selectedProduct.price}`;
+                    document.getElementById('orderModal').classList.remove('hidden');
+                }
+            });
+        });
+
+        // 取消订单
+        document.getElementById('cancelOrderBtn').addEventListener('click', () => {
+            document.getElementById('orderModal').classList.add('hidden');
+            selectedProduct = null;
+        });
+
+        // 确认订单
+        document.getElementById('confirmOrderBtn').addEventListener('click', () => {
+            if (!selectedProduct) return;
+            
+            // 减少库存
+            selectedProduct.stock--;
+            updateStockDisplay();
+            
+            // 生成订单信息
+            const order = {
+                id: 'ORD' + Date.now(),
+                product: selectedProduct,
+                time: new Date().toLocaleString(),
+                status: '已支付'
+            };
+            
+            orders.push(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            
+            document.querySelector('#paymentOrderId span').textContent = order.id;
+            document.getElementById('paymentAmount').textContent = `¥${selectedProduct.price}`;
+            document.getElementById('paymentModal').classList.remove('hidden');
+            document.getElementById('orderModal').classList.add('hidden');
+        });
+
+        // 关闭支付模态框
+        document.getElementById('closePaymentBtn').addEventListener('click', () => {
+            const orderId = document.querySelector('#paymentOrderId span').textContent;
+            sessionStorage.setItem('currentOrder', JSON.stringify({
+                id: orderId,
+                product: selectedProduct,
+                time: new Date().toLocaleString()
+            }));
+            document.getElementById('paymentModal').classList.add('hidden');
+            document.getElementById('passwordModal').classList.remove('hidden');
+        });
+
+        // 验证密码
+        document.getElementById('verifyBtn').addEventListener('click', () => {
+            const enteredPassword = document.getElementById('verifyPassword').value;
+            const currentOrder = JSON.parse(sessionStorage.getItem('currentOrder'));
+            
+            if (currentOrder && enteredPassword === currentOrder.product.password) {
+                document.getElementById('passwordModal').classList.add('hidden');
+                showAccountModal(currentOrder.product.account, currentOrder.product.accountPassword);
+                sessionStorage.removeItem('currentOrder');
+            } else {
+                document.getElementById('verifyError').classList.remove('hidden');
+            }
+        });
+
+        // 查询订单
+        document.getElementById('queryOrderBtn').addEventListener('click', () => {
+            const orderId = document.getElementById('orderId').value.trim();
+            const order = orders.find(o => o.id === orderId);
+
+            document.getElementById('orderResult').classList.add('hidden');
+            document.getElementById('orderNotFound').classList.add('hidden');
+
+            if (order) {
+                document.getElementById('resultOrderId').textContent = order.id;
+                document.getElementById('resultProductName').textContent = order.product.name;
+                document.getElementById('resultPrice').textContent = `¥${order.product.price}`;
+                document.getElementById('resultTime').textContent = order.time;
+                document.getElementById('resultStatus').textContent = order.status;
+
+                const passwordElement = document.getElementById('resultPassword');
+                const accountElement = document.getElementById('resultAccount');
+                const accountPasswordElement = document.getElementById('resultAccountPassword');
+
+                if (order.status === '已完成') {
+                    passwordElement.classList.remove('hidden');
+                    passwordElement.querySelector('span').textContent = order.product.password;
+                    accountElement.classList.remove('hidden');
+                    accountElement.querySelector('span').textContent = order.product.account;
+                    accountPasswordElement.classList.remove('hidden');
+                    accountPasswordElement.querySelector('span').textContent = order.product.accountPassword;
+                } else {
+                    passwordElement.classList.add('hidden');
+                    accountElement.classList.add('hidden');
+                    accountPasswordElement.classList.add('hidden');
+                }
+
+                document.getElementById('orderResult').classList.remove('hidden');
+            } else {
+                document.getElementById('orderNotFound').classList.remove('hidden');
+            }
+        });
+
+        // 显示账号信息模态框
+        function showAccountModal(account, accountPassword) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="glass-card p-8 w-full max-w-md">
+                    <h2 class="text-2xl font-bold text-center mb-6 text-white">账号信息</h2>
+                    <div class="mb-6 text-center text-gray-300">
+                        <p class="mb-4 font-semibold">账号：${account}</p>
+                        <p class="mb-4 font-semibold">密码：${accountPassword}</p>
+                        <p>请妥善保存您的账号和密码</p>
+                        <p class="mt-4">如有问题，请访问：<a href="https://v.kuaishou.com/J4H12yoX" target="_blank" class="kuaishou-link">快手客服</a></p>
+                    </div>
+                    <div class="flex justify-center space-x-4">
+                        <button id="backBtn" class="w-full bg-gray-700 text-gray-300 py-2 px-4 rounded-md hover:bg-gray-600">
+                            返回
+                        </button>
+                        <button id="closeAccountBtn" class="w-full rain-button text-white py-2 px-4 rounded-md">
+                            关闭
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            document.getElementById('backBtn').addEventListener('click', () => {
+                modal.remove();
+                document.getElementById('verifyPassword').value = '';
+            });
+            
+            document.getElementById('closeAccountBtn').addEventListener('click', () => modal.remove());
+        }
+
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            createRainDrops();
+            tryAutoPlay();
+            
+            document.getElementById('enterBtn').addEventListener('click', () => {
+                document.getElementById('welcomeScreen').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
